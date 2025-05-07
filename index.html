@@ -75,7 +75,6 @@
             100% { transform: scale(1.3); opacity: 0.4; }
         }
 
-        /* New Header Styles */
         .new-header {
             display: flex;
             justify-content: flex-start;
@@ -110,12 +109,11 @@
             margin: 0;
         }
 
-        /* New Card Styles */
         .new-card-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            margin: 20px;
+            margin: 20px 0; /* Reduced right margin to fix empty space */
             gap: 20px;
             position: relative;
             z-index: 1;
@@ -182,8 +180,9 @@
         .card-container {
             perspective: 1000px;
             display: flex;
-            justify-content: space-around;
-            margin-top: 50px;
+            justify-content: center; /* Centered to avoid extra space */
+            margin: 50px 0; /* Reduced right margin */
+            flex-wrap: wrap;
         }
 
         .card {
@@ -193,7 +192,7 @@
             transform-style: preserve-3d;
             transition: transform 0.5s, box-shadow 0.3s;
             margin: 10px;
-            cursor: pointer; /* Make clickable */
+            cursor: pointer;
         }
 
         .card:hover {
@@ -201,7 +200,7 @@
         }
 
         .card:active {
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 69, 0, 0.5); /* Light up on click */
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 69, 0, 0.5);
         }
 
         .card-front, .card-back {
@@ -229,11 +228,11 @@
             z-index: 1;
             margin-bottom: 40px;
             text-align: center;
-            background: linear-gradient(45deg, #FFD700, #FF4500); /* Gradient color */
+            background: linear-gradient(45deg, #FFD700, #FF4500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.5); /* Glowing effect */
-            animation: glow 2s infinite alternate; /* Pulsating glow */
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.5);
+            animation: glow 2s infinite alternate;
         }
 
         @keyframes glow {
@@ -250,13 +249,13 @@
         }
 
         .card-back p {
-            text-transform: lowercase; /* Convert to lowercase */
-            color: #333; /* Base text color */
-            background: linear-gradient(45deg, #FFD700, #FF4500); /* Gradient color */
+            text-transform: lowercase;
+            color: #333;
+            background: linear-gradient(45deg, #FFD700, #FF4500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 69, 0, 0.4); /* Glowing effect */
-            animation: textGlow 1.5s infinite alternate; /* Pulsating glow for text */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 69, 0, 0.4);
+            animation: textGlow 1.5s infinite alternate;
             margin-bottom: 10px;
             text-align: center;
         }
@@ -481,7 +480,6 @@
             letter-spacing: 1px;
         }
 
-        /* Responsive Design for Mobile (≤ 768px) */
         @media (max-width: 768px) {
             .new-header {
                 padding: 8px 15px;
@@ -497,7 +495,7 @@
             }
 
             .new-card-container {
-                margin: 10px;
+                margin: 10px 0; /* Removed right margin to fix empty space */
                 gap: 15px;
             }
 
@@ -521,7 +519,7 @@
             .card-container {
                 flex-direction: column;
                 align-items: center;
-                margin-top: 30px;
+                margin: 30px 0; /* Removed right margin */
             }
 
             .card {
@@ -617,10 +615,9 @@
             }
         }
 
-        /* Responsive Design for Desktop (> 768px) */
         @media (min-width: 769px) {
             .new-card-container {
-                margin: 20px;
+                margin: 20px 0; /* Removed right margin */
                 gap: 20px;
             }
 
@@ -631,7 +628,7 @@
 
             .card-container {
                 flex-direction: row;
-                justify-content: space-around;
+                justify-content: center; /* Centered */
             }
 
             .card {
@@ -668,7 +665,6 @@
 <body>
     <div class="dynamic-bg"></div>
 
-    <!-- New Header -->
     <div class="new-header">
         <div class="new-logo">
             <img src="https://iili.io/3OiDc8X.png" alt="Logo">
@@ -676,15 +672,12 @@
         </div>
     </div>
 
-    <!-- New Cards -->
     <div class="new-card-container">
-        <!-- Card 1: Ronaldo background -->
         <div class="new-card">
             <img class="bg" src="https://iili.io/3OL5DEG.jpg" alt="Ronaldo">
             <div class="new-card-content">“For every fan who believes in pushing limits.”</div>
         </div>
 
-        <!-- Card 2: Twitter post image -->
         <div class="new-card twitter-card">
             <a href="https://x.com/solanaCr7coin?t=kQiSdusWkFUfjuhT-sU9uw&s=09" target="_blank">
                 <img src="https://iili.io/3OL5p24.jpg" alt="Twitter Post">
@@ -697,7 +690,6 @@
     </section>
 
     <div class="card-container">
-        <!-- Card 1 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3OscveV.png');">
                 <span>Parcel Official CR7</span>
@@ -708,7 +700,6 @@
             </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3OLyN1f.png');">
                 <span>Top Holders</span>
@@ -719,7 +710,6 @@
             </div>
         </div>
 
-        <!-- Card 3 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3Oscjqu.png');">
                 <span>CEX Listing</span>
@@ -761,7 +751,7 @@
             <span>D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt</span>
             <button onclick="navigator.clipboard.writeText('D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt'); alert('Copied to clipboard!')">Copy</button>
         </div>
-        <a href="#">Buy CR7 Tokens</a>
+        <a href="https://raydium.io/swap/?inputMint=sol&outputMint=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN">Buy CR7 Token</a>
     </section>
 
     <footer>
