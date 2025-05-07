@@ -1,0 +1,812 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Join the global CR7 Army — where football passion meets crypto innovation.">
+    <title>Official CR7 Token (CR7)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2), transparent);
+            animation: pulse 15s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.2; }
+            100% { transform: scale(1.3); opacity: 0.4; }
+        }
+
+        /* New Header Styles */
+        .new-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+            margin-bottom: 20px;
+        }
+
+        .new-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .new-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+            object-fit: cover;
+        }
+
+        .new-logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #FFD700, #00BFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        /* New Card Styles */
+        .new-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .new-card {
+            width: 360px;
+            height: 200px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .new-card img.bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .new-card-content {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+        }
+
+        .twitter-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .twitter-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .under-logo {
+            text-align: center;
+            padding: 1rem;
+            background: #1a2526;
+            color: #FFD700;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(255, 215, 0, 0.5);
+            text-transform: uppercase;
+            margin: 0 10px;
+            border-radius: 8px;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+
+        .card {
+            width: 300px;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s, box-shadow 0.3s;
+            margin: 10px;
+            cursor: pointer; /* Make clickable */
+        }
+
+        .card:hover {
+            transform: rotateY(180deg);
+        }
+
+        .card:active {
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 69, 0, 0.5); /* Light up on click */
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 20px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-front span {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(45deg, #FFD700, #FF4500); /* Gradient color */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.5); /* Glowing effect */
+            animation: glow 2s infinite alternate; /* Pulsating glow */
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.5); }
+            100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 69, 0, 0.8); }
+        }
+
+        .card-back {
+            background-color: #f8f9fa;
+            transform: rotateY(180deg);
+            color: black;
+            font-size: 16px;
+            justify-content: center;
+        }
+
+        .card-back p {
+            text-transform: lowercase; /* Convert to lowercase */
+            color: #333; /* Base text color */
+            background: linear-gradient(45deg, #FFD700, #FF4500); /* Gradient color */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 69, 0, 0.4); /* Glowing effect */
+            animation: textGlow 1.5s infinite alternate; /* Pulsating glow for text */
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 69, 0, 0.4); }
+            100% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.9), 0 0 25px rgba(255, 69, 0, 0.7); }
+        }
+
+        .card-back button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .card-back button:hover {
+            background-color: #0056b3;
+        }
+
+        .card-front::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .tokenomics {
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.8), rgba(139, 0, 0, 0.6));
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.4), 0 0 20px rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            margin: 0 10px;
+        }
+
+        .tokenomics h2 {
+            background: linear-gradient(45deg, #FFD700, #FF4500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.5);
+        }
+
+        #tokenomics-chart {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .tokenomics ul {
+            list-style: none;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .tokenomics ul li {
+            margin: 0;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        }
+
+        .dynamic-background, .about, .join-us {
+            padding: 3rem 1rem;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.3), 0 0 15px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            margin: 0 10px;
+        }
+
+        .dynamic-background {
+            background: rgba(139, 0, 0, 0.9);
+        }
+
+        .dynamic-background h2, .about h2, .join-us h2 {
+            background: linear-gradient(45deg, #FFD700, #FF4500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 69, 0, 0.5);
+        }
+
+        .dynamic-background p, .about p {
+            background: linear-gradient(45deg, #FFFFFF, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .about {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .join-us {
+            background: rgba(139, 0, 0, 0.9);
+        }
+
+        .join-us p {
+            background: linear-gradient(45deg, #FFFFFF, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(255, 215, 0, 0.4);
+        }
+
+        .join-us a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            background: #FFD700;
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .join-us a:hover {
+            background: #FFC107;
+        }
+
+        .token-address-box {
+            background: #fff;
+            color: #000;
+            padding: 0.8rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .token-address-box span {
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .token-address-box button {
+            background: #FFD700;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .token-address-box button:hover {
+            background: #FFC107;
+        }
+
+        footer {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 3px solid #FFD700;
+        }
+
+        footer .social-links {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        footer .social-links a {
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        footer .social-links a:hover {
+            color: #FFC107;
+            border-color: #FFC107;
+        }
+
+        footer p {
+            font-size: 0.8rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design for Mobile (≤ 768px) */
+        @media (max-width: 768px) {
+            .new-header {
+                padding: 8px 15px;
+            }
+
+            .new-logo img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .new-logo h1 {
+                font-size: 1.2rem;
+            }
+
+            .new-card-container {
+                margin: 10px;
+                gap: 15px;
+            }
+
+            .new-card {
+                width: 100%;
+                max-width: 320px;
+                height: 180px;
+            }
+
+            .new-card-content {
+                font-size: 1rem;
+                bottom: 15px;
+                left: 15px;
+            }
+
+            .under-logo {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 30px;
+            }
+
+            .card {
+                width: 90%;
+                max-width: 300px;
+                height: 350px;
+                margin: 10px 0;
+            }
+
+            .card-front, .card-back {
+                font-size: 20px;
+                padding: 8px;
+            }
+
+            .card-front span {
+                margin-bottom: 30px;
+            }
+
+            .card-back {
+                font-size: 14px;
+            }
+
+            .card-back button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .tokenomics {
+                padding: 2rem 0.5rem;
+            }
+
+            .tokenomics h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .tokenomics ul {
+                gap: 0.8rem;
+            }
+
+            .tokenomics ul li {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .dynamic-background, .about, .join-us {
+                padding: 2rem 0.5rem;
+            }
+
+            .dynamic-background h2, .about h2, .join-us h2 {
+                font-size: 1.5rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .dynamic-background p, .about p, .join-us p {
+                font-size: 0.8rem;
+            }
+
+            .token-address-box {
+                max-width: 90%;
+                padding: 0.6rem;
+            }
+
+            .token-address-box span {
+                font-size: 0.8rem;
+            }
+
+            .token-address-box button {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+            }
+
+            .join-us a {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.8rem;
+            }
+
+            footer {
+                padding: 1.5rem 0;
+            }
+
+            footer .social-links {
+                gap: 1rem;
+            }
+
+            footer .social-links a {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            footer p {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Responsive Design for Desktop (> 768px) */
+        @media (min-width: 769px) {
+            .new-card-container {
+                margin: 20px;
+                gap: 20px;
+            }
+
+            .new-card {
+                width: 360px;
+                height: 200px;
+            }
+
+            .card-container {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .card {
+                width: 300px;
+                height: 400px;
+            }
+
+            .tokenomics {
+                padding: 3rem 1rem;
+            }
+
+            .tokenomics h2 {
+                font-size: 1.8rem;
+            }
+
+            .tokenomics ul li {
+                font-size: 0.9rem;
+            }
+
+            .dynamic-background, .about, .join-us {
+                padding: 3rem 1rem;
+            }
+
+            .dynamic-background h2, .about h2, .join-us h2 {
+                font-size: 1.8rem;
+            }
+
+            .dynamic-background p, .about p, .join-us p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-bg"></div>
+
+    <!-- New Header -->
+    <div class="new-header">
+        <div class="new-logo">
+            <img src="https://iili.io/3OiDc8X.png" alt="Logo">
+            <h1>Official CR7</h1>
+        </div>
+    </div>
+
+    <!-- New Cards -->
+    <div class="new-card-container">
+        <!-- Card 1: Ronaldo background -->
+        <div class="new-card">
+            <img class="bg" src="https://iili.io/3OL5DEG.jpg" alt="Ronaldo">
+            <div class="new-card-content">“For every fan who believes in pushing limits.”</div>
+        </div>
+
+        <!-- Card 2: Twitter post image -->
+        <div class="new-card twitter-card">
+            <a href="https://x.com/solanaCr7coin?t=kQiSdusWkFUfjuhT-sU9uw&s=09" target="_blank">
+                <img src="https://iili.io/3OL5p24.jpg" alt="Twitter Post">
+            </a>
+        </div>
+    </div>
+
+    <section class="under-logo">
+        <p>Join the global CR7 Army — where football passion meets crypto innovation.</p>
+    </section>
+
+    <div class="card-container">
+        <!-- Card 1 -->
+        <div class="card">
+            <div class="card-front" style="background-image: url('https://iili.io/3OscveV.png');">
+                <span>Parcel Official CR7</span>
+            </div>
+            <div class="card-back">
+                <p>claim your exclusive cr7 parcel and unlock rare rewards.<br>join the champions’ league of crypto collectors!</p>
+                <button onclick="window.location.href='https://raydium.io/swap/?inputMint=sol&outputMint=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN'">Go to Raydium</button>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+            <div class="card-front" style="background-image: url('https://iili.io/3OLyN1f.png');">
+                <span>Top Holders</span>
+            </div>
+            <div class="card-back">
+                <p>see who’s leading the official cr7 leaderboard.<br>the more you hold, the closer you are to glory!</p>
+                <button onclick="window.location.href='https://solscan.io/token/6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN?visualize=true#holders'">Go to Solscan</button>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+            <div class="card-front" style="background-image: url('https://iili.io/3Oscjqu.png');">
+                <span>CEX Listing</span>
+            </div>
+            <div class="card-back">
+                <p>get ready for official cr7 on top centralized exchanges.<br>global access, more liquidity, and unstoppable momentum!</p>
+                <button onclick="window.location.href='https://coinmarketcap.com/currencies/official-trump/#Markets'">Go to CoinMarketCap</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="tokenomics">
+        <h2>Tokenomics</h2>
+        <canvas id="tokenomics-chart"></canvas>
+        <ul>
+            <li><strong>Supply:</strong> 1,000,000,000 CR7</li>
+            <li><strong>Burn:</strong> 20% Initial Burn</li>
+            <li><strong>Liquidity:</strong> 50% Locked</li>
+            <li><strong>Marketing:</strong> 15%</li>
+            <li><strong>Team:</strong> 10%</li>
+            <li><strong>Community Rewards:</strong> 5%</li>
+        </ul>
+    </section>
+
+    <section class="dynamic-background">
+        <h2>Official CR7</h2>
+        <p>Official CR7 is more than just a token — it’s a tribute to the relentless spirit, excellence, and global legacy of Cristiano Ronaldo. Built for fans, dreamers, and champions, this token celebrates the GOAT’s unstoppable journey from the streets of Madeira to the pinnacle of world football.</p>
+    </section>
+
+    <section class="about">
+        <h2>About Official CR7</h2>
+        <p>Official CR7 is the ultimate fan token inspired by the legendary Cristiano Ronaldo. Like Ronaldo’s unmatched dedication, explosive power, and winning mentality, this token is designed to break limits and redefine success in the crypto world. Whether you’re a lifelong CR7 fan or a believer in pushing beyond boundaries, Official CR7 unites a global community under one goal: to conquer, to inspire, and to win. Holders of Official CR7 enjoy exclusive rewards, community events, and a chance to be part of a movement as unstoppable as Ronaldo himself.</p>
+    </section>
+
+    <section class="join-us">
+        <h2>Join the Official CR7 Movement!</h2>
+        <p>Join the global CR7 Army — where football passion meets crypto innovation</p>
+        <div class="token-address-box">
+            <span>D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt</span>
+            <button onclick="navigator.clipboard.writeText('D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt'); alert('Copied to clipboard!')">Copy</button>
+        </div>
+        <a href="#">Buy CR7 Tokens</a>
+    </section>
+
+    <footer>
+        <ul class="social-links">
+            <li><a href="https://x.com/solanaCr7coin?t=kQiSdusWkFUfjuhT-sU9uw&s=09" target="_blank">Twitter</a></li>
+            <li><a href="https://t.me/OfficialCR7solana" target="_blank">Telegram</a></li>
+            <li><a href="https://instagram.com" target="_blank">Instagram</a></li>
+            <li><a href="https://facebook.com" target="_blank">Facebook</a></li>
+            <li><a href="https://discord.com" target="_blank">Discord</a></li>
+        </ul>
+        <p>© 2025 Official CR7 Token. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('tokenomics-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Burn', 'Liquidity', 'Marketing', 'Team', 'Community Rewards'],
+                    datasets: [{
+                        data: [20, 50, 15, 10, 5],
+                        backgroundColor: ['#FF4500', '#FFD700', '#1E90FF', '#32CD32', '#FF69B4'],
+                        borderWidth: 2,
+                        borderColor: '#fff',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: 'white', font: { size: 14 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    },
+                    animation: { animateRotate: true, animateScale: true }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
