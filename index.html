@@ -54,9 +54,32 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: #1a1a1a;
             position: relative;
             overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            background-image: 
+                linear-gradient(rgba(255, 215, 0, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 215, 0, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: -50px -50px; }
         }
 
         .dynamic-bg {
@@ -67,7 +90,7 @@
             height: 100%;
             background: radial-gradient(circle, rgba(255, 215, 0, 0.2), transparent);
             animation: pulse 15s infinite alternate;
-            z-index: -1;
+            z-index: -2;
         }
 
         @keyframes pulse {
@@ -75,6 +98,7 @@
             100% { transform: scale(1.3); opacity: 0.4; }
         }
 
+        /* New Header Styles */
         .new-header {
             display: flex;
             justify-content: flex-start;
@@ -109,11 +133,12 @@
             margin: 0;
         }
 
+        /* New Card Styles */
         .new-card-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            margin: 20px 0; /* Reduced right margin to fix empty space */
+            margin: 20px;
             gap: 20px;
             position: relative;
             z-index: 1;
@@ -180,9 +205,8 @@
         .card-container {
             perspective: 1000px;
             display: flex;
-            justify-content: center; /* Centered to avoid extra space */
-            margin: 50px 0; /* Reduced right margin */
-            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 50px;
         }
 
         .card {
@@ -415,7 +439,7 @@
             margin: 1rem auto;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .token-address-box span {
@@ -424,28 +448,13 @@
             letter-spacing: 1px;
         }
 
-        .token-address-box button {
-            background: #FFD700;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            font-size: 0.8rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-
-        .token-address-box button:hover {
-            background: #FFC107;
-        }
-
         footer {
             background: #000;
             color: #fff;
             text-align: center;
             padding: 2rem 0;
             border-top: 3px solid #FFD700;
+            margin-top: auto;
         }
 
         footer .social-links {
@@ -480,6 +489,7 @@
             letter-spacing: 1px;
         }
 
+        /* Responsive Design for Mobile (≤ 768px) */
         @media (max-width: 768px) {
             .new-header {
                 padding: 8px 15px;
@@ -495,7 +505,7 @@
             }
 
             .new-card-container {
-                margin: 10px 0; /* Removed right margin to fix empty space */
+                margin: 10px;
                 gap: 15px;
             }
 
@@ -519,7 +529,7 @@
             .card-container {
                 flex-direction: column;
                 align-items: center;
-                margin: 30px 0; /* Removed right margin */
+                margin-top: 30px;
             }
 
             .card {
@@ -587,11 +597,6 @@
                 font-size: 0.8rem;
             }
 
-            .token-address-box button {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.7rem;
-            }
-
             .join-us a {
                 padding: 0.5rem 1.2rem;
                 font-size: 0.8rem;
@@ -615,9 +620,10 @@
             }
         }
 
+        /* Responsive Design for Desktop (> 768px) */
         @media (min-width: 769px) {
             .new-card-container {
-                margin: 20px 0; /* Removed right margin */
+                margin: 20px;
                 gap: 20px;
             }
 
@@ -628,7 +634,7 @@
 
             .card-container {
                 flex-direction: row;
-                justify-content: center; /* Centered */
+                justify-content: space-around;
             }
 
             .card {
@@ -663,8 +669,10 @@
     </style>
 </head>
 <body>
+    <div class="grid"></div>
     <div class="dynamic-bg"></div>
 
+    <!-- New Header -->
     <div class="new-header">
         <div class="new-logo">
             <img src="https://iili.io/3OiDc8X.png" alt="Logo">
@@ -672,12 +680,15 @@
         </div>
     </div>
 
+    <!-- New Cards -->
     <div class="new-card-container">
+        <!-- Card 1: Ronaldo background -->
         <div class="new-card">
             <img class="bg" src="https://iili.io/3OL5DEG.jpg" alt="Ronaldo">
             <div class="new-card-content">“For every fan who believes in pushing limits.”</div>
         </div>
 
+        <!-- Card 2: Twitter post image -->
         <div class="new-card twitter-card">
             <a href="https://x.com/solanaCr7coin?t=kQiSdusWkFUfjuhT-sU9uw&s=09" target="_blank">
                 <img src="https://iili.io/3OL5p24.jpg" alt="Twitter Post">
@@ -690,6 +701,7 @@
     </section>
 
     <div class="card-container">
+        <!-- Card 1 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3OscveV.png');">
                 <span>Parcel Official CR7</span>
@@ -700,6 +712,7 @@
             </div>
         </div>
 
+        <!-- Card 2 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3OLyN1f.png');">
                 <span>Top Holders</span>
@@ -710,6 +723,7 @@
             </div>
         </div>
 
+        <!-- Card 3 -->
         <div class="card">
             <div class="card-front" style="background-image: url('https://iili.io/3Oscjqu.png');">
                 <span>CEX Listing</span>
@@ -749,9 +763,8 @@
         <p>Join the global CR7 Army — where football passion meets crypto innovation</p>
         <div class="token-address-box">
             <span>D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt</span>
-            <button onclick="navigator.clipboard.writeText('D7rovwR7jqrfpGjqc8n74y4LnsmGfmTjChAkktmT5pRt'); alert('Copied to clipboard!')">Copy</button>
         </div>
-        <a href="https://raydium.io/swap/?inputMint=sol&outputMint=6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN">Buy CR7 Token</a>
+        <a href="#">Buy CR7 Tokens</a>
     </section>
 
     <footer>
