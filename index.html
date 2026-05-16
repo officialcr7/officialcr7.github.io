@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>EVMS Adress ডুপ্লিকেট ডিটেক্টর ও ইউনিক এক্সট্র্যাক্টর</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', 'Courier New', monospace;
+        }
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            margin: 0;
+            padding: 24px 20px;
+            color: #eef5ff;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(18, 25, 45, 0.75);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(72, 187, 255, 0.15);
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #b3e5ff, #7aa9ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h1 small {
+            font-size: 0.85rem;
+            background: #1e2a3a;
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #9ec8ff;
+            font-weight: normal;
+        }
+        .sub {
+            color: #8fadcc;
+            border-left: 3px solid #3b82f6;
+            padding-left: 14px;
+            margin: 10px 0 20px 0;
+            font-size: 0.9rem;
+        }
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .panel {
+            flex: 1;
+            min-width: 280px;
+            background: #0f1422cc;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid #2a3650;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .panel h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            border-bottom: 1px solid #2d3a5e;
+            padding-bottom: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 380px;
+            background: #03060e;
+            color: #e2eaff;
+            border: 1px solid #2d4379;
+            border-radius: 1rem;
+            padding: 16px;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.45;
+            resize: vertical;
+            outline: none;
+            transition: 0.2s;
+        }
+        textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0 12px;
+        }
+        button {
+            background: #1e293b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            border: 1px solid #3a4a6e;
+        }
+        button.primary {
+            background: #2563eb;
+            border-color: #60a5fa;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+        }
+        button.primary:hover {
+            background: #3b82f6;
+            transform: scale(1.02);
+        }
+        button.warning {
+            background: #b91c1c;
+            border-color: #f87171;
+        }
+        button.warning:hover {
+            background: #dc2626;
+        }
+        button.success {
+            background: #0f3b2c;
+            border-color: #2ecc71;
+        }
+        button:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+        .stats {
+            background: #050a15;
+            border-radius: 1rem;
+            padding: 8px 16px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+        .stat-card {
+            background: #111827;
+            padding: 4px 14px;
+            border-radius: 40px;
+        }
+        .result-area {
+            background: #0a0f1a;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 20px;
+            border: 1px solid #2c3e66;
+        }
+        .duplicate-list {
+            max-height: 220px;
+            overflow-y: auto;
+            background: #01010133;
+            padding: 8px;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+        .dup-item {
+            font-family: monospace;
+            padding: 4px 8px;
+            margin: 4px 0;
+            background: #1e1f2c;
+            border-left: 4px solid #f97316;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .dup-addr {
+            font-weight: bold;
+            color: #ffb347;
+            word-break: break-all;
+        }
+        .dup-count {
+            background: #dc2626;
+            padding: 0px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .line-error {
+            color: #ffb3b3;
+            font-size: 12px;
+        }
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .copy-download {
+            display: flex;
+            gap: 10px;
+        }
+        pre {
+            background: #020617;
+            padding: 14px;
+            border-radius: 1rem;
+            overflow-x: auto;
+            font-size: 12px;
+            font-family: monospace;
+            max-height: 340px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .highlight-red {
+            background-color: #7f1a1a;
+            color: #ffc9c9;
+            border-radius: 14px;
+            padding: 2px 8px;
+            display: inline-block;
+            font-weight: bold;
+        }
+        footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 32px;
+            color: #5e7a9f;
+        }
+        @media (max-width: 780px) {
+            .container { padding: 1rem; }
+            button { padding: 6px 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧩 EVM Address Toolkit <small>ডুপ্লিকেট ডিটেক্ট + ইউনিক এক্সট্র্যাক্ট</small></h1>
+    <div class="sub">🔍 ১০,০০০+ এড্রেস সাপোর্ট করে | ডুপ্লিকেট লাইন রেড হাইলাইট | ক্লিন কপি/ডাউনলোড</div>
+
+    <div class="two-columns">
+        <!-- ইনপুট প্যানেল -->
+        <div class="panel">
+            <h3>📥 ইনপুট এলাকা (প্রতি লাইনে একটি করে EVM অ্যাড্রেস)</h3>
+            <textarea id="inputAddresses" placeholder='0xAbc...&#10;0xdef...&#10;0xAbc...&#10;প্রতি লাইনে একটি করে অ্যাড্রেস দিন। হাজার হাজার লাইন দেওয়া যাবে।'></textarea>
+            <div class="btn-group">
+                <button id="detectBtn" class="primary">🔎 ডুপ্লিকেট শনাক্ত করুন</button>
+                <button id="clearBtn" class="warning">🗑️ ক্লিয়ার সব</button>
+                <button id="sampleBtn">📋 নমুনা লোড</button>
+            </div>
+            <div class="stats" id="statsPanel">
+                <span>📊 মোট এড্রেস: <strong id="totalCount">0</strong></span>
+                <span>🔄 ডুপ্লিকেট সারি: <strong id="dupLinesCount">0</strong></span>
+                <span>✨ ইউনিক এড্রেস: <strong id="uniqueCount">0</strong></span>
+            </div>
+            <div id="duplicateDetails" style="margin-top: 8px;">
+                <div style="font-weight:500; margin-bottom:5px;">⚠️ ডুপ্লিকেট লিস্ট (অ্যাড্রেস &nbsp;→&nbsp; কতবার)</div>
+                <div class="duplicate-list" id="dupListContainer">⏳ এখনও ডিটেক্ট করেননি</div>
+            </div>
+        </div>
+
+        <!-- আউটপুট প্যানেল (ইউনিক এড্রেস) -->
+        <div class="panel">
+            <h3>✨ ইউনিক অ্যাড্রেস (ডুপ্লিকেট বাদে)</h3>
+            <div class="output-header">
+                <span>🔹 নিচে শুধু অনন্য এড্রেস দেখাবে / কপি করা যাবে</span>
+                <div class="copy-download">
+                    <button id="copyUniqueBtn" class="success">📋 কপি করুন</button>
+                    <button id="downloadUniqueBtn" class="success">⬇️ ডাউনলোড (.txt)</button>
+                </div>
+            </div>
+            <pre id="uniqueOutput">— ডুপ্লিকেট চিহ্নিত করার পর ইউনিক এড্রেস এখানে দেখা যাবে —</pre>
+        </div>
+    </div>
+
+    <!-- পৃথক ভাবে লাইন বাই লাইন রিপোর্ট ও লাল টেক্সট আকারে দেখানোর জন্য সংক্ষিপ্ত উদাহরণ -->
+    <div class="result-area">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <span><strong>🧾 লাইন ভিত্তিক ডুপ্লিকেট ইনডিকেটর (লাল → ডুপ্লিকেট লাইন)</strong> &nbsp; <span style="background:#7f1a1a; padding:2px 8px; border-radius:20px;">🔴 লাল লাইন = ডুপ্লিকেট</span></span>
+            <button id="copyOriginalWithMarkers" style="background:#2d3748;">🎨 মার্কড টেক্সট কপি</button>
+        </div>
+        <div style="background:#03050b; border-radius: 1rem; margin-top: 12px; padding: 12px; max-height: 280px; overflow: auto; font-family: monospace; font-size: 12px;" id="highlightedLinesPreview">
+            <!-- ডুপ্লিকেট লাল রঙের প্রিভিউ -->
+        </div>
+    </div>
+    <footer>⚡ প্রতিটি লাইনের তুলনা case-sensitive, হোয়াইটস্পেস ট্রিম করা হয়। EVM চেকসম অন্তর্ভুক্ত নয়, শুধু ডুপ্লিকেট ডিটেক্ট।</footer>
+</div>
+
+<script>
+    (function(){
+        // DOM elements
+        const inputTextarea = document.getElementById('inputAddresses');
+        const detectBtn = document.getElementById('detectBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const sampleBtn = document.getElementById('sampleBtn');
+        const uniqueOutputPre = document.getElementById('uniqueOutput');
+        const copyUniqueBtn = document.getElementById('copyUniqueBtn');
+        const downloadUniqueBtn = document.getElementById('downloadUniqueBtn');
+        const copyOriginalWithMarkers = document.getElementById('copyOriginalWithMarkers');
+        const totalCountSpan = document.getElementById('totalCount');
+        const dupLinesCountSpan = document.getElementById('dupLinesCount');
+        const uniqueCountSpan = document.getElementById('uniqueCount');
+        const dupListContainer = document.getElementById('dupListContainer');
+        const highlightedPreviewDiv = document.getElementById('highlightedLinesPreview');
+
+        // internal state
+        let currentLines = [];        // আসল লাইন array (ট্রিম না করেও রাখা যেতে পারে কিন্তু কম্পেয়ারের জন্য ট্রিম)
+        let rawLines = [];            // আসল লাইন (প্রদর্শনের জন্য)
+        let duplicateIndices = new Set();   // কোন লাইন ইনডেক্স ডুপ্লিকেট (প্রথম occurrence বাদে সব)
+        let duplicateMap = new Map();       // address -> total count
+        let uniqueAddresses = [];            // ইউনিক অ্যাড্রেস (অর্ডার সংরক্ষিত)
+        
+        // helper: লাইন প্রসেস (খালি লাইন বাদ, ট্রিম)
+        function processAndDetect(inputStr){
+            const lines = inputStr.split(/\r?\n/);
+            const trimmedLines = lines.map(l => l.trim());
+            // তবে খালি লাইন ইগনোর করা উচিত? ইউজার যদি ফাঁকা লাইন দেয়, সেটা কাউন্ট না করাই ভাল, কিন্তু ডুপ্লিকেট ডিটেক্টে উপেক্ষা করব
+            const nonEmptyLines = [];
+            const originalNonEmpty = [];
+            for(let i=0; i<lines.length; i++){
+                let trimmed = trimmedLines[i];
+                if(trimmed !== ""){
+                    nonEmptyLines.push(trimmed);
+                    originalNonEmpty.push(lines[i]); // আসল ফরম্যাট (ট্রিম না করে রাখতে চাইলে)
+                }
+            }
+            // যদি সব লাইন খালি হয়
+            if(nonEmptyLines.length === 0){
+                return { lines:[], raw:[], dupSet:new Set(), dupMap:new Map(), uniq:[] };
+            }
+            const freq = new Map();
+            for(let addr of nonEmptyLines){
+                freq.set(addr, (freq.get(addr) || 0) + 1);
+            }
+            const dupIdxSet = new Set();
+            const firstOccurrence = new Map();
+            // ডুপ্লিকেট হওয়া লাইনগুলির ইনডেক্স চিহ্নিত (প্রথম ছাড়া সব)
+            for(let i=0; i<nonEmptyLines.length; i++){
+                const addr = nonEmptyLines[i];
+                const count = freq.get(addr);
+                if(count > 1){
+                    if(!firstOccurrence.has(addr)){
+                        firstOccurrence.set(addr, i);
+                    } else {
+                        dupIdxSet.add(i);
+                    }
+                }
+            }
+            // ইউনিক অ্যাড্রেস (অর্ডার প্রিজার্ভ)
+            const uniqList = [];
+            const seenUniq = new Set();
+            for(let addr of nonEmptyLines){
+                if(!seenUniq.has(addr)){
+                    seenUniq.add(addr);
+                    uniqList.push(addr);
+                }
+            }
+            return {
+                lines: nonEmptyLines,
+                raw: originalNonEmpty,
+                dupSet: dupIdxSet,
+                dupMap: freq,
+                uniq: uniqList
+            };
+        }
+        
+        // আপডেট UI সব
+        function updateUI(){
+            if(currentLines.length === 0){
+                totalCountSpan.innerText = '0';
+                dupLinesCountSpan.innerText = '0';
+                uniqueCountSpan.innerText = '0';
+                uniqueOutputPre.innerText = '— কোনো এড্রেস নেই —';
+                dupListContainer.innerHTML = '📭 কোন ডুপ্লিকেট শনাক্ত হয়নি বা ইনপুট খালি';
+                highlightedPreviewDiv.innerHTML = '<span style="color:#aaa;">এখানে লাইন গুলো হাইলাইট হয়ে দেখাবে...</span>';
+                return;
+            }
+            const total = currentLines.length;
+            const uniqueTotal = uniqueAddresses.length;
+            let duplicateLineCount = duplicateIndices.size;
+            totalCountSpan.innerText = total;
+            dupLinesCountSpan.innerText = duplicateLineCount;
+            uniqueCountSpan.innerText = uniqueTotal;
+            
+            // ডুপ্লিকেট মানচিত্র দেখানো
+            if(duplicateMap.size){
+                let dupEntries = [];
+                for(let [addr, count] of duplicateMap.entries()){
+                    if(count > 1){
+                        dupEntries.push({addr, count});
+                    }
+                }
+                if(dupEntries.length === 0){
+                    dupListContainer.innerHTML = '✅ কোন ডুপ্লিকেট এড্রেস পাওয়া যায়নি!';
+                } else {
+                    dupListContainer.innerHTML = '';
+                    for(let item of dupEntries){
+                        const div = document.createElement('div');
+                        div.className = 'dup-item';
+                        div.innerHTML = `<span class="dup-addr">${escapeHtml(item.addr)}</span> <span class="dup-count">${item.count} বার</span>`;
+                        dupListContainer.appendChild(div);
+                    }
+                }
+            } else {
+                dupListContainer.innerHTML = '🔹 কোন ডুপ্লিকেট নেই (সব এড্রেস ইউনিক)';
+            }
+            
+            // ইউনিক আউটপুট দেখানো
+            if(uniqueAddresses.length){
+                uniqueOutputPre.innerText = uniqueAddresses.join('\n');
+            } else {
+                uniqueOutputPre.innerText = '(কোন বৈধ এড্রেস নেই)';
+            }
+            
+            // লাইন ভিত্তিক হাইলাইটেড প্রিভিউ তৈরি (যেখানে ডুপ্লিকেট লাল)
+            buildHighlightedPreview();
+        }
+        
+        function buildHighlightedPreview(){
+            if(!currentLines.length){
+                highlightedPreviewDiv.innerHTML = '<span style="color:#aaa;">প্রিভিউ দেখানোর জন্য ডুপ্লিকেট ডিটেক্ট করুন</span>';
+                return;
+            }
+            let html = '';
+            for(let i=0; i<currentLines.length; i++){
+                const lineContent = currentLines[i];
+                const isDup = duplicateIndices.has(i);
+                let displayLine = escapeHtml(lineContent);
+                if(isDup){
+                    // লাল ব্যাকগ্রাউন্ড + বোল্ড
+                    html += `<div style="background:#7f1a1a; color:#ffdddd; padding:2px 8px; margin:2px 0; border-radius:12px; font-family:monospace;">🔴 ${displayLine}</div>`;
+                } else {
+                    html += `<div style="border-bottom:1px solid #1e2a3a; padding:2px 6px; color:#cbd5e6;">${displayLine}</div>`;
+                }
+            }
+            highlightedPreviewDiv.innerHTML = html;
+        }
+        
+        // মূল ডিটেক্ট ফাংশন
+        function detectAndShow(){
+            const rawInput = inputTextarea.value;
+            const result = processAndDetect(rawInput);
+            currentLines = result.lines;
+            rawLines = result.raw;
+            duplicateIndices = result.dupSet;
+            duplicateMap = result.dupMap;
+            uniqueAddresses = result.uniq;
+            updateUI();
+            // ছোট এফেক্ট
+            if(currentLines.length > 0){
+                const totalDup = duplicateIndices.size;
+                if(totalDup > 0){
+                    // ছোট নোটিফিকেশন স্টাইলে
+                    const notify = document.createElement('div');
+                    notify.style.position = 'fixed';
+                    notify.style.bottom = '20px';
+                    notify.style.right = '20px';
+                    notify.style.background = '#f97316';
+                    notify.style.padding = '8px 18px';
+                    notify.style.borderRadius = '40px';
+                    notify.style.fontWeight = 'bold';
+                    notify.innerText = `⚠️ ${totalDup} টি ডুপ্লিকেট লাইন সনাক্ত! লাল হাইলাইট দেখুন।`;
+                    document.body.appendChild(notify);
+                    setTimeout(() => notify.remove(), 2500);
+                } else {
+                    const toast = document.createElement('div');
+                    toast.style.position = 'fixed';
+                    toast.style.bottom = '20px';
+                    toast.style.right = '20px';
+                    toast.style.background = '#10b981';
+                    toast.style.padding = '6px 16px';
+                    toast.style.borderRadius = '40px';
+                    toast.innerText = '✅ কোনো ডুপ্লিকেট নেই! সব এড্রেস ইউনিক';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 2000);
+                }
+            } else {
+                uniqueOutputPre.innerText = '⚠️ ইনপুটে কোনো ভ্যালিড এড্রেস পাওয়া যায়নি।';
+                dupListContainer.innerHTML = '❌ খালি ইনপুট অথবা শুধু ফাঁকা লাইন।';
+                highlightedPreviewDiv.innerHTML = '<span style="color:#aaa;">ইনপুট খালি</span>';
+            }
+        }
+        
+        // ক্লিয়ার সব
+        function clearAll(){
+            inputTextarea.value = '';
+            currentLines = [];
+            rawLines = [];
+            duplicateIndices.clear();
+            duplicateMap.clear();
+            uniqueAddresses = [];
+            updateUI();
+            uniqueOutputPre.innerText = '— ক্লিয়ার করা হয়েছে। নতুন এড্রেস লিখুন —';
+            dupListContainer.innerHTML = '📭 ডুপ্লিকেট লিস্ট এখানে দেখাবে';
+            highlightedPreviewDiv.innerHTML = '<span style="color:#aaa;">প্রিভিউ রিসেট</span>';
+        }
+        
+        // নমুনা লোড (বিভিন্ন ডুপ্লিকেট সহ)
+        function loadSample(){
+            const sample = `0xb7f7f6c52f2e2fdb1963eab30438024864c313f6
+0xa858ddc0445d8131dac4d1de01f834ffcba52ef1
+0x000000000000003607fce1ac9e043a86675c5c2f
+0xb88f61e6fbda83fbfffabe364112137480398018
+0xa858ddc0445d8131dac4d1de01f834ffcba52ef1
+0x69021ae8769586d56791d29615959997c2012b99
+0x000000000000003607fce1ac9e043a86675c5c2f
+0x26f744711ee9e5079cbeaf318ba8a8e938844de6
+0x0232d1083e970f0c78f56202b9a666b526fa379f
+0xa25803ab86a327786bb59395fc0164d826b98298
+0x577ebc5de943e35cdf9ecb5bbe1f7d7cb6c7c647
+0x4084df8bf74ba73f04eb39b89df698608df7f4b5
+0x2238c8b16c36628b8f1f36486675c1e2a30debf1
+0x4084df8bf74ba73f04eb39b89df698608df7f4b5
+0x7174039818a41e1ae40fdcfa3e293b0f41592af2
+0x31a5ff62a1b2c0f030aee1661eab6513ae676e23
+0x2c81cee7050c9d03295560851ffde123bdf9696a
+0x062c5432107e3b9ad924512209a7468b5c200fcd
+0x7174039818a41e1ae40fdcfa3e293b0f41592af2
+0x7760e0243ca9baa630412865df7b39afba42ff0f
+0x673a039f6a959fa9db65d16781e6defde30375d9
+0xf68e4d63c8ea83083d1cb9858210cf2b03d8266b
+0xdde8df9a7dc9f68bdac815f493d1d731de911b5a
+0x530afa101bed324809d0738d45b38a669314ff54
+0xf5a4ba515dd36a42e9634a3ac1f1c58fa24d3acd
+0x2cc12318de28edc9c753f7cb22100890af630c2d
+0xff36ff458b51dcd034598c56f65a8491427dc572
+0x1244eae9fa2c064453b5f605d708c0a0bfba4838
+0x00b278dd68f9d8491795ffaf771120638bef1686
+0x005734d7d408bccf41cff34b46244551d01f0a6b
+0x0233a4970e5fa014f263b4a52427e997291e6cca
+0xc6a8206756fbcb770770523e2de26bcc351a8713
+0x2a193336b79d9462bb36215210d44e9d60878c65
+0xb47a70df538b9a3b591bc5d75da66a04c879b291
+0xc47af8f0aeaadba922afa60c3018427a9a100a03
+0x83e551e48158136df20eaf9554a669a2dba574ba
+0x66c7a7348250f453a37cf86410a946f9668de386
+0x37aefd2754dc85426335e33911efc3ce31e22c90
+0xf65c1c42745606e397bb2993e25e09382a16fb87
+0xbb67d2ab6251a6bd5276759cb431088c5487a3b2
+0x555428363d00b92205216c61db67cecbff7554b2
+0x78f0269f5b1ca914c8c58993f41181f89e212b27
+0x830c47362766804dc43fb07215c3c50a09cc572c
+0x2f2f237d2e655cc0a6f6fef761e5aef13087e71f
+0x3295df41a2f288da03818ae32565e1599f1b2eee
+0x4f04e071834cb6035ef28c968ed6f64e80b13ebd
+0x67954ac510255b6b3724073022196b67bdf260b6
+0xcafbf7952763c7237d2848a553e3146cbdd08602
+0x53311150764f7eb2999022ed1aa5a8c17bb5fc57
+0x1bb351c5410b2f6bae36a74aa6b38a9800ae72d6
+0x95b677f9154a4eccab68dd6f3fe52bca2590828f
+0x231d688aa706ddecb8300f85bee23bf5a9202fef
+0x44fab57dba0e643018c06d83cc8d658980b7ee08
+0x609b37d6a37692499b07647a6e54587419b2bba8
+0x8088d74111a2368f5b7f0064a581d3bb72e6527e
+0xc98a513970f320b11ab408c12eef176292e227bf`;
+            inputTextarea.value = sample;
+            detectAndShow();
+        }
+        
+        // কপি ইউনিক
+        function copyUnique() {
+            if(uniqueAddresses.length === 0){
+                alert('কপি করার জন্য কোনো ইউনিক অ্যাড্রেস নেই!');
+                return;
+            }
+            const text = uniqueAddresses.join('\n');
+            navigator.clipboard.writeText(text).then(()=>{
+                showToast("✅ ইউনিক এড্রেস কপি হয়েছে!", "#2ecc71");
+            }).catch(()=> alert("কপি ব্যর্থ"));
+        }
+        
+        // ডাউনলোড ইউনিক
+        function downloadUnique(){
+            if(uniqueAddresses.length === 0){
+                alert('ডাউনলোড করার মতো ডাটা নেই');
+                return;
+            }
+            const content = uniqueAddresses.join('\n');
+            const blob = new Blob([content], {type: 'text/plain'});
+            const a = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            a.href = url;
+            a.download = `unique_evm_addresses_${new Date().toISOString().slice(0,19)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("📁 ফাইল ডাউনলোড শুরু হয়েছে", "#3b82f6");
+        }
+        
+        // মার্কড টেক্সট কপি (লাল চিহ্নিত করে প্লেইন টেক্সটে? ইউজার দেখতে চাইলে কপি ফরম্যাটেড? আমরা প্লেইন কপি দেব যেখানে লাইনের আগে "[DUP] " যোগ করতে পারি)
+        function copyMarkedPlaintext(){
+            if(currentLines.length === 0){
+                alert('কোন ডাটা নেই, আগে ডুপ্লিকেট ডিটেক্ট করুন');
+                return;
+            }
+            let resultText = '';
+            for(let i=0; i<currentLines.length; i++){
+                const line = currentLines[i];
+                const isDup = duplicateIndices.has(i);
+                if(isDup){
+                    resultText += `🔴 [DUPLICATE] ${line}\n`;
+                } else {
+                    resultText += `🟢 ${line}\n`;
+                }
+            }
+            navigator.clipboard.writeText(resultText).then(()=>{
+                showToast("📋 ডুপ্লিকেট মার্কসহ টেক্সট কপি হয়েছে!", "#f39c12");
+            }).catch(()=>alert("কপি করতে ব্যর্থ"));
+        }
+        
+        function showToast(msg, bgColor){
+            const toast = document.createElement('div');
+            toast.innerText = msg;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = bgColor;
+            toast.style.color = 'white';
+            toast.style.padding = '8px 24px';
+            toast.style.borderRadius = '40px';
+            toast.style.fontWeight = 'bold';
+            toast.style.zIndex = '9999';
+            toast.style.fontSize = '14px';
+            document.body.appendChild(toast);
+            setTimeout(()=> toast.remove(), 2000);
+        }
+        
+        function escapeHtml(str){
+            return str.replace(/[&<>]/g, function(m){
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ইভেন্ট লিসেনার
+        detectBtn.addEventListener('click', detectAndShow);
+        clearBtn.addEventListener('click', clearAll);
+        sampleBtn.addEventListener('click', loadSample);
+        copyUniqueBtn.addEventListener('click', copyUnique);
+        downloadUniqueBtn.addEventListener('click', downloadUnique);
+        copyOriginalWithMarkers.addEventListener('click', copyMarkedPlaintext);
+        
+        // init এ খালি অবস্থা আপডেট
+        clearAll();
+    })();
+</script>
+</body>
+</html>
